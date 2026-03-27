@@ -5,7 +5,6 @@ const cors = require("cors");
 const app = express();
 app.use(cors());
 
-// conexão com PostgreSQL
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
@@ -13,12 +12,24 @@ const pool = new Pool({
   }
 });
 
-// rota principal
-app.get("/", (req, res) => {
-  res.send("API funcionando");
+app.get("/", async (req, res) => {
+  try {
+    const test = await pool.query("SELECT NOW() AS agora");
+    res.json({
+      status: "API funcionando",
+      banco: "conectado",
+      agora: test.rows[0].agora
+    });
+  } catch (err) {
+    console.error("ERRO ROOT:", err);
+    res.status(500).json({
+      status: "API funcionando",
+      banco: "erro",
+      erro: err.message
+    });
+  }
 });
 
-// rota do timer
 app.get("/api/timer", async (req, res) => {
   try {
     const result = await pool.query(`
@@ -33,9 +44,10 @@ app.get("/api/timer", async (req, res) => {
 
     res.json(result.rows);
   } catch (err) {
-    console.error("ERRO:", err);
+    console.error("ERRO TIMER:", err);
     res.status(500).json({
-      erro: err.message
+      erro: err.message,
+      detalhe: err.code || null
     });
   }
 });
