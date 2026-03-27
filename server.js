@@ -5,12 +5,11 @@ const cors = require("cors");
 const app = express();
 app.use(cors());
 
-// conexão com PostgreSQL (SEM SSL)
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL
+  connectionString: process.env.DATABASE_URL,
+  ssl: false
 });
 
-// rota principal (teste)
 app.get("/", async (req, res) => {
   try {
     const test = await pool.query("SELECT NOW() AS agora");
@@ -29,7 +28,6 @@ app.get("/", async (req, res) => {
   }
 });
 
-// rota do timer
 app.get("/api/timer", async (req, res) => {
   try {
     const result = await pool.query(`
