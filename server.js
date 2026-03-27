@@ -33,8 +33,11 @@ app.get("/api/timer", async (req, res) => {
     const result = await pool.query(`
       SELECT
         pedidovendaid::text AS pedido,
-        dt_reserva AS inicio
-      FROM pedidovenda
+        nome_cadcftv AS cliente,
+        dt_reserva AS inicio,
+        tempo_util_formatado,
+        situacao
+      FROM vw_pedidos_timer
       WHERE dt_reserva IS NOT NULL
       ORDER BY dt_reserva ASC
       LIMIT 50
