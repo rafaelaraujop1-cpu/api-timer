@@ -5,17 +5,25 @@ const cors = require("cors");
 const app = express();
 app.use(cors());
 
+// conexão com PostgreSQL
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
+// rota principal
+app.get("/", (req, res) => {
+  res.send("API funcionando");
+});
+
+// rota do timer
 app.get("/api/timer", async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT
         pedidovendaid::text AS pedido,
-        nome_cadcftv::text AS cliente,
         dt_reserva AS inicio
       FROM pedidovenda
       WHERE dt_reserva IS NOT NULL
@@ -25,13 +33,11 @@ app.get("/api/timer", async (req, res) => {
 
     res.json(result.rows);
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro no servidor");
+    console.error("ERRO:", err);
+    res.status(500).json({
+      erro: err.message
+    });
   }
-});
-
-app.get("/", (req, res) => {
-  res.send("API funcionando");
 });
 
 const port = process.env.PORT || 10000;
