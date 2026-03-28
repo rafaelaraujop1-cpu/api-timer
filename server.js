@@ -10,33 +10,15 @@ const pool = new Pool({
   ssl: false
 });
 
-app.get("/", async (req, res) => {
-  try {
-    const test = await pool.query("SELECT NOW() AS agora");
-    res.json({
-      status: "API funcionando",
-      banco: "conectado",
-      agora: test.rows[0].agora
-    });
-  } catch (err) {
-    console.error("ERRO ROOT:", err);
-    res.status(500).json({
-      status: "API funcionando",
-      banco: "erro",
-      erro: err.message
-    });
-  }
-});
-
 app.get("/api/timer", async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT
         pedidovendaid::text AS pedido,
         nome_cadcftv AS cliente,
-        dt_reserva AS inicio,
-        primeira_conferencia,
-        ultima_conferencia,
+        to_char(dt_reserva AT TIME ZONE 'America/Sao_Paulo', 'YYYY-MM-DD HH24:MI:SS') AS inicio,
+        to_char(primeira_conferencia, 'YYYY-MM-DD HH24:MI:SS') AS primeira_conferencia,
+        to_char(ultima_conferencia, 'YYYY-MM-DD HH24:MI:SS') AS ultima_conferencia,
         tempo_util_formatado,
         situacao
       FROM vw_pedidos_timer
@@ -55,7 +37,10 @@ app.get("/api/timer", async (req, res) => {
   }
 });
 
-const port = process.env.PORT || 10000;
-app.listen(port, () => {
-  console.log("Servidor rodando na porta", port);
+app.get("/", (req, res) => {
+  res.send("API funcionando");
+});
+
+app.listen(10000, () => {
+  console.log("API rodando na porta 10000");
 });
