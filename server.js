@@ -60,13 +60,13 @@ app.get("/api/timer", async (req, res) => {
                     END
                   THEN '1d 00:00:00'
                   ELSE
-                    FLOOR(GREATEST(EXTRACT(EPOCH FROM (current_timestamp - base.inicio)), 0) / 86400)::text
+                    FLOOR(GREATEST(EXTRACT(EPOCH FROM (current_timestamp - base.inicio)), 0)::numeric / 86400)::text
                     || 'd ' ||
-                    LPAD(FLOOR(MOD(GREATEST(EXTRACT(EPOCH FROM (current_timestamp - base.inicio)), 0), 86400) / 3600)::text, 2, '0')
+                    LPAD(FLOOR(MOD(GREATEST(EXTRACT(EPOCH FROM (current_timestamp - base.inicio)), 0)::numeric, 86400) / 3600)::text, 2, '0')
                     || ':' ||
-                    LPAD(FLOOR(MOD(GREATEST(EXTRACT(EPOCH FROM (current_timestamp - base.inicio)), 0), 3600) / 60)::text, 2, '0')
+                    LPAD(FLOOR(MOD(GREATEST(EXTRACT(EPOCH FROM (current_timestamp - base.inicio)), 0)::numeric, 3600) / 60)::text, 2, '0')
                     || ':' ||
-                    LPAD(MOD(FLOOR(GREATEST(EXTRACT(EPOCH FROM (current_timestamp - base.inicio)), 0))::bigint, 60)::text, 2, '0')
+                    LPAD(MOD(FLOOR(GREATEST(EXTRACT(EPOCH FROM (current_timestamp - base.inicio)), 0)::numeric)::bigint, 60)::text, 2, '0')
                 END
               ELSE base.tempo_util_formatado
             END
@@ -86,20 +86,20 @@ app.get("/api/timer", async (req, res) => {
                     END
                   THEN '1d 00:00:00'
                   ELSE
-                    FLOOR(GREATEST(EXTRACT(EPOCH FROM (base.ultima_conferencia - base.inicio)), 0) / 86400)::text
+                    FLOOR(GREATEST(EXTRACT(EPOCH FROM (base.ultima_conferencia - base.inicio)), 0)::numeric / 86400)::text
                     || 'd ' ||
-                    LPAD(FLOOR(MOD(GREATEST(EXTRACT(EPOCH FROM (base.ultima_conferencia - base.inicio)), 0), 86400) / 3600)::text, 2, '0')
+                    LPAD(FLOOR(MOD(GREATEST(EXTRACT(EPOCH FROM (base.ultima_conferencia - base.inicio)), 0)::numeric, 86400) / 3600)::text, 2, '0')
                     || ':' ||
-                    LPAD(FLOOR(MOD(GREATEST(EXTRACT(EPOCH FROM (base.ultima_conferencia - base.inicio)), 0), 3600) / 60)::text, 2, '0')
+                    LPAD(FLOOR(MOD(GREATEST(EXTRACT(EPOCH FROM (base.ultima_conferencia - base.inicio)), 0)::numeric, 3600) / 60)::text, 2, '0')
                     || ':' ||
-                    LPAD(MOD(FLOOR(GREATEST(EXTRACT(EPOCH FROM (base.ultima_conferencia - base.inicio)), 0))::bigint, 60)::text, 2, '0')
+                    LPAD(MOD(FLOOR(GREATEST(EXTRACT(EPOCH FROM (base.ultima_conferencia - base.inicio)), 0)::numeric)::bigint, 60)::text, 2, '0')
                 END
               ELSE
-                FLOOR(COALESCE(conf_tempo.segundos_uteis_conf, 0) / 86400)::text
+                FLOOR(COALESCE(conf_tempo.segundos_uteis_conf, 0)::numeric / 86400)::text
                 || 'd ' ||
-                LPAD(FLOOR(MOD(COALESCE(conf_tempo.segundos_uteis_conf, 0), 86400) / 3600)::text, 2, '0')
+                LPAD(FLOOR(MOD(COALESCE(conf_tempo.segundos_uteis_conf, 0)::numeric, 86400) / 3600)::text, 2, '0')
                 || ':' ||
-                LPAD(FLOOR(MOD(COALESCE(conf_tempo.segundos_uteis_conf, 0), 3600) / 60)::text, 2, '0')
+                LPAD(FLOOR(MOD(COALESCE(conf_tempo.segundos_uteis_conf, 0)::numeric, 3600) / 60)::text, 2, '0')
                 || ':' ||
                 LPAD(MOD(COALESCE(conf_tempo.segundos_uteis_conf, 0), 60)::text, 2, '0')
             END
